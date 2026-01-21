@@ -50,13 +50,13 @@ class Program
                 DrawLine3D(simulation.passages[i].start, simulation.passages[i].end, color);
             }
 
+            EndMode3D();
+
             for (int i = 0; i < simulation.nodes.Count; i++)
             {
-                Color color = Color.Red;
-                DrawSphere(simulation.nodes[i], 0.01f, color);
+                Vector2 screenSpace = GetWorldToScreen(simulation.nodes[i], camera);
+                DrawCircleV(screenSpace, 2, Color.Red);
             }
-
-            EndMode3D();
 
             DrawText(GetFPS().ToString(), 8, 8, 14, Color.Black);
 
