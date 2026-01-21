@@ -1,29 +1,10 @@
-﻿using System.Collections.Generic;
-using UnityEngine;
+﻿using System.Numerics;
 
-public class Passage
-{
-    public int id;
-    public int verticesid;
-    public Vector3 start;
-    public Vector3 end;
-    public Vector3 direction;
-    public Passage parent;
-    public List<Passage> children = new List<Passage>();
-    public List<Vector3> attractors = new List<Vector3>();
-    
-    public Passage(Vector3 start, Vector3 end, Vector3 direction, Passage parent = null)
-    {
-        this.start = start;
-        this.end = end;
-        this.direction = direction;
-        this.parent = parent;
-    }
-}
 
-public class Generator : MonoBehaviour
+
+public class Generator
 {
-    [Header("Space Colonization Settings")]
+    // Space Colonization Settings
     public int initialNodeAmount = 1000;
     public int nodesLeft = 0;
     public float passageLength = 0.1f;
@@ -31,19 +12,19 @@ public class Generator : MonoBehaviour
     public float killRange = 0.6f;
     public float randomGrowth = 0.2f;
 
-    [Header("Cave Shape Settings")]
+    // Cave Shape Settings
     public Transform ellipsoidTransform;
     public float surfaceHeight = 2;
 
-    [Header("Mesh Generation Settings")]
+    // Mesh Generation Settings
     public Material caveMaterial;
-    [Range(0.005f, 0.1f)] public float passageWidth = 0.01f;
-    [Range(3, 8)] public int subdivisions = 6;
+    public float passageWidth = 0.01f; // range 0.005f - 0.1f
+    public int subdivisions = 6; // range 3 - 8
 
-    [Header("Camera & Player Settings")]
-    [Range(1, 10)] public float cameraOffset = 3;
-    [Range(0.4f, 2)] public float cameraSpeed = 1;
-    [Range(0.1f, 1)] public float walkInterval = 0.5f;
+    // Camera & Player Settings
+    public float cameraOffset = 3; // range 1 - 10
+    public float cameraSpeed = 1; // range 0.4f - 2f
+    public float walkInterval = 0.5f; // range 0.1f 1f
     public int othersAmount = 12;
 
     private List<Vector3> nodes = new List<Vector3>();
