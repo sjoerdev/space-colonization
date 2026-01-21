@@ -17,6 +17,9 @@ public class Simulation
     
     public void Initialize()
     {
+        // generate nodes
+        GenerateNodes(initialNodeAmount, 5);
+
         // create entrance
         var entrance = Vector3.Zero;
         Passage firstPassage = new Passage(entrance, entrance + new Vector3(0, passageLength, 0), new Vector3(0, 1, 0));
@@ -119,6 +122,24 @@ public class Simulation
                     extremities.Add(next);
                 }
             }
+        }
+    }
+
+    void GenerateNodes(int number, int radius)
+    {
+        for (int i = 0; i < number; i++)
+        {
+            float alpha = Random.Shared.NextSingle() * MathF.PI;
+            float theta = Random.Shared.NextSingle() * MathF.PI * 2f;
+            float offset = MathF.Pow(Random.Shared.NextSingle(), 1f / 3f) / 2;
+
+            var p = new Vector3(
+                MathF.Cos(theta) * MathF.Sin(alpha),
+                MathF.Sin(theta) * MathF.Sin(alpha),
+                MathF.Cos(alpha)
+            ) * offset * radius;
+
+            nodes.Add(p);
         }
     }
 
