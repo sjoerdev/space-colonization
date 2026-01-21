@@ -22,8 +22,6 @@ var camera = new Camera3D()
 Simulation simulation = new Simulation();
 simulation.Initialize();
 
-SetTargetFPS(60);
-
 while (!WindowShouldClose())
 {
     // update here
@@ -55,6 +53,8 @@ while (!WindowShouldClose())
     }
 
     EndMode3D();
+
+    DrawText(GetFPS().ToString(), 8, 8, 14, Color.Black);
 
     EndDrawing();
 }
