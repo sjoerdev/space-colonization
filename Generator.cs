@@ -1,8 +1,6 @@
 ﻿using System.Numerics;
 
-
-
-public class Generator
+public class Simulation
 {
     // Space Colonization Settings
     public int initialNodeAmount = 1000;
@@ -14,42 +12,16 @@ public class Generator
 
     private List<Vector3> nodes = new List<Vector3>();
     private List<int> activeNodes = new List<int>();
-    private Passage firstPassage;
     private List<Passage> passages = new List<Passage>();
     private List<Passage> extremities = new List<Passage>();
-    private List<Passage> othersEntrances = new List<Passage>();
-    private List<Passage> othersPassages = new List<Passage>();
     
-    private void Start()
+    private void Initialize()
     {
         // create entrance
         var entrance = Vector3.Zero;
-        firstPassage = new Passage(entrance, entrance + new Vector3(0, passageLength, 0), new Vector3(0, 1, 0));
+        Passage firstPassage = new Passage(entrance, entrance + new Vector3(0, passageLength, 0), new Vector3(0, 1, 0));
         passages.Add(firstPassage);
         extremities.Add(firstPassage);
-    }
-
-    Passage GetNewHighest()
-    {
-        Passage highest = null;
-        foreach (var ex in extremities)
-        {
-            bool taken = ex == playerEntrance || othersEntrances.Contains(ex);
-            if (!taken) if (highest == null || ex.end.Y > highest.end.Y) highest = ex;
-        }
-        return highest;
-    }
-
-    Passage GetParentByIndex(Passage passage, int index)
-    {
-        if (passage.parent == null) return null;
-
-        Passage parent = passage;
-        for (int i = 0; i < index + 1; i++) 
-            if (parent.parent != null) parent = parent.parent;
-            else return null;
-
-        return parent;
     }
 
     private void IterateSpaceColonization()
@@ -108,7 +80,11 @@ public class Generator
                 if (passages[i].attractors.Count > 0)
                 {
                     Vector3 dir = new Vector3(0, 0, 0);
-                    for (int j = 0; j < passages[i].attractors.Count; j++) dir += (passages[i].attractors[j] - passages[i].end).normalized;
+                    for (int j = 0; j < passages[i].attractors.Count; j++)
+                    {
+                        var diff = passages[i].attractors[j] - passages[i].end;
+                        dir += Vector3.Normalize(diff);
+                    }
                     dir /= passages[i].attractors.Count;
                     dir += RandomGrowthVector();
                     dir = Vector3.Normalize(dir);
@@ -153,9 +129,9 @@ public class Generator
 
     private Vector3 RandomGrowthVector()
     {
-        float alpha = Random.Range(0f, MathF.PI);
-        float theta = Random.Range(0f, MathF.PI * 2f);
-        Vector3 pt = new Vector3(MathF.Cos(theta) * MathF.Sin(alpha), MathF.Sin(theta) * MathF.Sin(alpha), MathF.Cos(alpha));
-        return pt * randomGrowth;
+        float alpha = Random.Shared.NextSingle() * MathF.PI;
+        float theta = Random.Shared.NextSingle() * MathF.PI * 2f;
+        Vector3 offset = new Vector3(MathF.Cos(theta) * MathF.Sin(alpha), MathF.Sin(theta) * MathF.Sin(alpha), MathF.Cos(alpha));
+        return offset * randomGrowth;
     }
 }
