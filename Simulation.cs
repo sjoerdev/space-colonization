@@ -10,12 +10,12 @@ public class Simulation
     public float killRange = 0.6f;
     public float randomGrowth = 0.2f;
 
-    private List<Vector3> nodes = new List<Vector3>();
-    private List<int> activeNodes = new List<int>();
-    private List<Passage> passages = new List<Passage>();
-    private List<Passage> extremities = new List<Passage>();
+    public List<Vector3> nodes = new List<Vector3>();
+    public List<int> activeNodes = new List<int>();
+    public List<Passage> passages = new List<Passage>();
+    public List<Passage> extremities = new List<Passage>();
     
-    private void Initialize()
+    public void Initialize()
     {
         // create entrance
         var entrance = Vector3.Zero;
@@ -24,7 +24,7 @@ public class Simulation
         extremities.Add(firstPassage);
     }
 
-    private void IterateSpaceColonization()
+    public void IterateSpaceColonization()
     {
         // cleanup leftover nodes and return
         if (nodes.Count > 0 && nodes.Count <= nodesLeft) nodes.Clear();
