@@ -5,16 +5,11 @@ using static Raylib_cs.Raylib;
 
 unsafe class Program
 {
-    static bool growing;
-
     static void Main()
     {
-        int width = 800;
-        int height = 600;
-
         SetTraceLogLevel(TraceLogLevel.Warning);
 
-        InitWindow(width, height, "test");
+        InitWindow(800, 600, "test");
 
         var camera = new Camera3D()
         {
