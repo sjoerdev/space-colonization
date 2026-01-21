@@ -3,8 +3,10 @@ using System.Numerics;
 using Raylib_cs;
 using static Raylib_cs.Raylib;
 
-class Program
+unsafe class Program
 {
+    static bool growing;
+
     static void Main()
     {
         int width = 800;
@@ -30,11 +32,12 @@ class Program
         {
             // update here
 
-            if (IsMouseButtonDown(MouseButton.Right)) unsafe { UpdateCamera(&camera, CameraMode.ThirdPerson); }
+            if (IsMouseButtonDown(MouseButton.Right)) UpdateCamera(&camera, CameraMode.ThirdPerson);
 
-            if (IsKeyPressed(KeyboardKey.F)) simulation.IterateSpaceColonization();
+            if (IsKeyPressed(KeyboardKey.F)) Repeater.ToggleRepeating(simulation.IterateSpaceColonization, 0.1f);
 
-            // rendering
+
+            // rendering 3d here
 
             BeginDrawing();
             ClearBackground(new Color(88, 88, 88, 255));
@@ -52,6 +55,8 @@ class Program
 
             EndMode3D();
 
+            // rendering 2d here
+
             for (int i = 0; i < simulation.nodes.Count; i++)
             {
                 Vector2 screenSpace = GetWorldToScreen(simulation.nodes[i], camera);
@@ -64,5 +69,37 @@ class Program
         }
 
         CloseWindow();
+    }
+}
+
+static class Repeater
+{
+    static bool repeating;
+
+    public static void ToggleRepeating(Action action, float time)
+    {
+        if (!repeating) StartRepeating(action, time);
+        else StopRepeating();
+    }
+
+    public static void StartRepeating(Action action, float time)
+    {
+        if (repeating) return;
+        repeating = true;
+        Loop(action, time);
+    }
+
+    public static void StopRepeating()
+    {
+        if (!repeating) return;
+        repeating = false;
+    }
+
+    async static void Loop(Action action, float time)
+    {
+        if (!repeating) return;
+        action.Invoke();
+        await Task.Delay((int)(time * 1000f));
+        Loop(action, time);
     }
 }
