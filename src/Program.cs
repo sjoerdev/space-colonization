@@ -41,11 +41,11 @@ unsafe class Program
 
             DrawGrid(10, 1);
 
-            for (int i = 0; i < simulation.passages.Count; i++)
+            for (int i = 0; i < simulation.lines.Count; i++)
             {
-                bool extremity = simulation.extremities.Contains(simulation.passages[i]);
+                bool extremity = simulation.extremities.Contains(simulation.lines[i]);
                 Color color = extremity ? Color.Green : Color.White;
-                DrawLine3D(simulation.passages[i].start, simulation.passages[i].end, color);
+                DrawLine3D(simulation.lines[i].start, simulation.lines[i].end, color);
             }
 
             EndMode3D();

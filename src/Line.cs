@@ -1,17 +1,15 @@
 using System.Numerics;
 
-public class Passage
+public class Line
 {
-    public int id;
-    public int verticesid;
     public Vector3 start;
     public Vector3 end;
     public Vector3 direction;
-    public Passage parent;
-    public List<Passage> children = new List<Passage>();
+    public Line parent;
+    public List<Line> children = new List<Line>();
     public List<Vector3> attractors = new List<Vector3>();
     
-    public Passage(Vector3 start, Vector3 end, Vector3 direction, Passage parent = null)
+    public Line(Vector3 start, Vector3 end, Vector3 direction, Line parent = null)
     {
         this.start = start;
         this.end = end;
