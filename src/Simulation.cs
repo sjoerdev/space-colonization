@@ -16,11 +16,10 @@ public class Simulation
     public void Initialize()
     {
         // generate nodes
-        GenerateNodes(initialNodeAmount, 5);
+        GenerateNodesInSphere(initialNodeAmount, 5f);
 
         // create first line
-        var entrance = Vector3.Zero;
-        Line firstLine = new Line(entrance, entrance + new Vector3(0, lineLength, 0), new Vector3(0, 1, 0));
+        Line firstLine = new Line(Vector3.Zero, Vector3.UnitY * lineLength, Vector3.UnitY);
         lines.Add(firstLine);
         extremities.Add(firstLine);
     }
@@ -116,7 +115,7 @@ public class Simulation
         if (allAttractors.Count == 0) nodes.Clear();
     }
 
-    void GenerateNodes(int number, int radius)
+    void GenerateNodesInSphere(int number, float radius)
     {
         for (int i = 0; i < number; i++)
         {
