@@ -8,10 +8,10 @@ public class Simulation
     public float killRange = 0.6f;
     public float randomGrowth = 0.2f;
 
-    public List<Vector3> nodes = new List<Vector3>();
-    public List<int> allAttractors = new List<int>();
-    public List<Line> lines = new List<Line>();
-    public List<Line> extremities = new List<Line>();
+    public List<Vector3> nodes = [];
+    public List<int> allAttractors = [];
+    public List<Line> lines = [];
+    public List<Line> extremities = [];
 
     public void Initialize()
     {
