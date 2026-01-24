@@ -8,8 +8,8 @@ unsafe class Program
     static void Main()
     {
         SetTraceLogLevel(TraceLogLevel.Warning);
-
-        InitWindow(800, 600, "test");
+        SetConfigFlags(ConfigFlags.ResizableWindow);
+        InitWindow(1280, 720, "raylib window");
 
         var camera = new Camera3D()
         {
