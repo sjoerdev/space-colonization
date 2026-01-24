@@ -10,16 +10,16 @@ public class Simulation
     public float randomGrowth = 0.2f;
 
     public List<Vector3> nodes = new List<Vector3>();
-    public List<int> activeNodes = new List<int>();
+    public List<int> allAttractors = new List<int>();
     public List<Line> lines = new List<Line>();
     public List<Line> extremities = new List<Line>();
-    
+
     public void Initialize()
     {
         // generate nodes
         GenerateNodes(initialNodeAmount, 5);
 
-        // create entrance
+        // create first line
         var entrance = Vector3.Zero;
         Line firstLine = new Line(entrance, entrance + new Vector3(0, lineLength, 0), new Vector3(0, 1, 0));
         lines.Add(firstLine);
@@ -32,7 +32,7 @@ public class Simulation
         if (nodes.Count > 0 && nodes.Count <= nodesLeft) nodes.Clear();
         if (nodes.Count == 0) return;
 
-        // remove nodes in killrange
+        // remove nodes in killrange (nodes that are too close to a line)
         List<Vector3> toRemove = new List<Vector3>();
         for (int i = 0; i < nodes.Count; i++)
         {
@@ -44,43 +44,44 @@ public class Simulation
         }
         foreach (var node in toRemove) nodes.Remove(node);
 
-        // reset attractors and active nodes
+        // reset attractors
         for (int i = 0; i < lines.Count; i++) lines[i].attractors.Clear();
-        activeNodes.Clear();
+        allAttractors.Clear();
 
-        // calculate active nodes and attractors
+        // calculate which nodes are in attraction range of a line
         for (int i = 0; i < nodes.Count; i++)
         {
             float lastDist = 10000;
-            Line closest = null;
+            Line closestLine = null;
 
-            for (int j = 0; j < lines.Count; j++) 
+            for (int j = 0; j < lines.Count; j++)
             {
                 float distance = Vector3.Distance(lines[j].end, nodes[i]);
-                if (distance < attractionRange && distance < lastDist) 
+                if (distance < attractionRange && distance < lastDist)
                 {
-                    closest = lines[j];
+                    closestLine = lines[j];
                     lastDist = distance;
                 }
             }
 
-            if (closest != null)
+            if (closestLine != null)
             {
-                closest.attractors.Add(nodes[i]);
-                activeNodes.Add(i);
+                closestLine.attractors.Add(nodes[i]);
+                allAttractors.Add(i);
             }
         }
 
-        // if there are nodes in attraction range
-        if (activeNodes.Count != 0)
+        // if there are nodes in attraction range of any line
+        if (allAttractors.Count != 0)
         {
             extremities.Clear();
             List<Line> newLines = new List<Line>();
 
-            for (int i = 0; i < lines.Count; i++)
+            for (int i = 0; i < lines.Count; i++) // for each line
             {
-                if (lines[i].attractors.Count > 0)
+                if (lines[i].attractors.Count > 0) // for each attractor of that line
                 {
+                    // get direction in average direction of all attractors
                     Vector3 dir = new Vector3(0, 0, 0);
                     for (int j = 0; j < lines[i].attractors.Count; j++)
                     {
@@ -88,38 +89,44 @@ public class Simulation
                         dir += Vector3.Normalize(diff);
                     }
                     dir /= lines[i].attractors.Count;
+
+                    // add random offset to direction
                     dir += RandomGrowthVector();
                     dir = Vector3.Normalize(dir);
+
+                    // create new line that goes in that direction
                     Line line = new Line(lines[i].end, lines[i].end + dir * lineLength, dir, lines[i]);
                     lines[i].children.Add(line);
+
+                    // make this new line the new extremity
                     newLines.Add(line);
                     extremities.Add(line);
-                } 
-                else if (lines[i].children.Count == 0) extremities.Add(lines[i]);
+                }
+                else // if the line has no attractors
+                {
+                    if (lines[i].children.Count == 0) // if the line has no children
+                    {
+                        extremities.Add(lines[i]);
+                    }
+                }
             }
 
             lines.AddRange(newLines);
         }
 
-        // if no active nodes
-        if (activeNodes.Count == 0)
+        // if no nodes attract any line then make lines grow randomly
+        if (allAttractors.Count == 0)
         {
             for (int i = 0; i < extremities.Count; i++)
             {
                 Line current = extremities[i];
-                bool extremityInRadius = IsPointInsideGrowthRegion(current.start);
-                bool beginning = lines.Count < 20;
-
-                if (extremityInRadius || beginning)
-                {
-                    Vector3 raw = current.direction + RandomGrowthVector();
-                    Vector3 dir = Vector3.Normalize(raw);
-                    Line next = new Line(current.end, current.end + dir * lineLength, dir, current);
-                    current.children.Add(next);
-                    lines.Add(next);
-                    extremities.Remove(current);
-                    extremities.Add(next);
-                }
+                Vector3 raw = current.direction + RandomGrowthVector();
+                Vector3 dir = Vector3.Normalize(raw);
+                Line next = new Line(current.end, current.end + dir * lineLength, dir, current);
+                current.children.Add(next);
+                lines.Add(next);
+                extremities.Remove(current);
+                extremities.Add(next);
             }
         }
     }
@@ -140,11 +147,6 @@ public class Simulation
 
             nodes.Add(p);
         }
-    }
-
-    private bool IsPointInsideGrowthRegion(Vector3 point)
-    {
-        return true; // todo
     }
 
     private Vector3 RandomGrowthVector()
