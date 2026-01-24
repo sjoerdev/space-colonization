@@ -3,7 +3,6 @@
 public class Simulation
 {
     public int initialNodeAmount = 1000;
-    public int nodesLeft = 0;
     public float lineLength = 0.1f;
     public float attractionRange = 1;
     public float killRange = 0.6f;
@@ -29,7 +28,6 @@ public class Simulation
     public void IterateSpaceColonization()
     {
         // cleanup leftover nodes and return
-        if (nodes.Count > 0 && nodes.Count <= nodesLeft) nodes.Clear();
         if (nodes.Count == 0) return;
 
         // remove nodes in killrange (nodes that are too close to a line)
@@ -106,7 +104,7 @@ public class Simulation
                 {
                     if (lines[i].children.Count == 0) // if the line has no children
                     {
-                        extremities.Add(lines[i]);
+                        extremities.Add(lines[i]); // it already was an extremity, so add it back
                     }
                 }
             }
@@ -114,21 +112,8 @@ public class Simulation
             lines.AddRange(newLines);
         }
 
-        // if no nodes attract any line then make lines grow randomly
-        if (allAttractors.Count == 0)
-        {
-            for (int i = 0; i < extremities.Count; i++)
-            {
-                Line current = extremities[i];
-                Vector3 raw = current.direction + RandomGrowthVector();
-                Vector3 dir = Vector3.Normalize(raw);
-                Line next = new Line(current.end, current.end + dir * lineLength, dir, current);
-                current.children.Add(next);
-                lines.Add(next);
-                extremities.Remove(current);
-                extremities.Add(next);
-            }
-        }
+        // if no nodes attract any line then end the sim
+        if (allAttractors.Count == 0) nodes.Clear();
     }
 
     void GenerateNodes(int number, int radius)
