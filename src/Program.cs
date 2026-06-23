@@ -66,7 +66,23 @@ unsafe class Program
                     DrawCircleV(screenSpace, 2, Color.Red);
                 }
 
-                DrawText(GetFPS().ToString(), 8, 8, 14, Color.Black);
+                string[] debugStrings =
+                [
+                    "fps: " + GetFPS().ToString(),
+                    "initialNodeAmount: " + simulation.initialNodeAmount.ToString(),
+                    "lineLength: " + simulation.lineLength.ToString(),
+                    "attractionRange: " + simulation.attractionRange.ToString(),
+                    "killRange: " + simulation.killRange.ToString(),
+                    "randomGrowth: " + simulation.randomGrowth.ToString(),
+                ];
+
+                for (int i = 0; i < debugStrings.Length; i++)
+                {
+                    int xoff = 10;
+                    int yoff = 10;
+                    int fontSize = 20;
+                    DrawText(debugStrings[i], xoff, yoff + ((fontSize + 2) * i), fontSize, Color.Black);
+                }
 
             EndDrawing();
         }
