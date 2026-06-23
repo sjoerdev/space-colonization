@@ -31,6 +31,8 @@ unsafe class Program
 
             if (IsKeyPressed(KeyboardKey.F)) Repeater.ToggleRepeating(simulation.IterateSpaceColonization, 0.1f);
 
+            var dir = Vector3.Zero - camera.Position;
+            camera.Position += dir * GetMouseWheelMove() * GetFrameTime() * 20;
 
             // rendering 3d here
 
