@@ -13,6 +13,14 @@ public class Simulation
     public List<Line> lines = [];
     public List<Line> extremities = [];
 
+    public void Clear()
+    {
+        nodes.Clear();
+        allAttractors.Clear();
+        lines.Clear();
+        extremities.Clear();
+    }
+
     public void Initialize()
     {
         // generate nodes
@@ -30,7 +38,7 @@ public class Simulation
         if (nodes.Count == 0) return;
 
         // remove nodes in killrange (nodes that are too close to a line)
-        List<Vector3> toRemove = new List<Vector3>();
+        List<Vector3> toRemove = [];
         for (int i = 0; i < nodes.Count; i++)
         {
             for (int j = 0; j < lines.Count; j++)
@@ -72,7 +80,7 @@ public class Simulation
         if (allAttractors.Count != 0)
         {
             extremities.Clear();
-            List<Line> newLines = new List<Line>();
+            List<Line> newLines = [];
 
             for (int i = 0; i < lines.Count; i++) // for each line
             {

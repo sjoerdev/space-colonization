@@ -31,36 +31,42 @@ unsafe class Program
 
             if (IsKeyPressed(KeyboardKey.F)) Repeater.ToggleRepeating(simulation.IterateSpaceColonization, 0.1f);
 
+            if (IsKeyPressed(KeyboardKey.R))
+            {
+                simulation.Clear();
+                simulation.Initialize();
+            }
+
             var dir = Vector3.Zero - camera.Position;
             camera.Position += dir * GetMouseWheelMove() * GetFrameTime() * 20;
 
             // rendering 3d here
 
             BeginDrawing();
-            ClearBackground(new Color(88, 88, 88, 255));
+                ClearBackground(new Color(88, 88, 88, 255));
 
-            BeginMode3D(camera);
+                BeginMode3D(camera);
 
-            DrawGrid(10, 1);
+                    DrawGrid(10, 1);
 
-            for (int i = 0; i < simulation.lines.Count; i++)
-            {
-                bool extremity = simulation.extremities.Contains(simulation.lines[i]);
-                Color color = extremity ? Color.Green : Color.White;
-                DrawLine3D(simulation.lines[i].start, simulation.lines[i].end, color);
-            }
+                    for (int i = 0; i < simulation.lines.Count; i++)
+                    {
+                        bool extremity = simulation.extremities.Contains(simulation.lines[i]);
+                        Color color = extremity ? Color.Green : Color.White;
+                        DrawLine3D(simulation.lines[i].start, simulation.lines[i].end, color);
+                    }
 
-            EndMode3D();
+                EndMode3D();
 
-            // rendering 2d here
+                // rendering 2d here
 
-            for (int i = 0; i < simulation.nodes.Count; i++)
-            {
-                Vector2 screenSpace = GetWorldToScreen(simulation.nodes[i], camera);
-                DrawCircleV(screenSpace, 2, Color.Red);
-            }
+                for (int i = 0; i < simulation.nodes.Count; i++)
+                {
+                    Vector2 screenSpace = GetWorldToScreen(simulation.nodes[i], camera);
+                    DrawCircleV(screenSpace, 2, Color.Red);
+                }
 
-            DrawText(GetFPS().ToString(), 8, 8, 14, Color.Black);
+                DrawText(GetFPS().ToString(), 8, 8, 14, Color.Black);
 
             EndDrawing();
         }
